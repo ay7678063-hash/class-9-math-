@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Class 9 Mathematics — Student Textbook (Single File)</title>
+
+<!-- =========================
+     STYLES
+     ========================= -->
+<style>
+:root{
+  --bg1:#f3f8ff; --bg2:#fff7fb; --accent:#1e88e5; --muted:#6b7280;
+  --card:#ffffff; --radius:12px; --maxw:1100px;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial;color:#0f172a;background:linear-gradient(135deg,var(--bg1),var(--bg2))}
+.container{max-width:var(--maxw);margin:0 auto;padding:1rem}
+
+/* Header */
+.header{background:linear-gradient(90deg,var(--accent),#42a5f5);color:white;padding:1rem;border-radius:10px;box-shadow:0 8px 28px rgba(30,136,229,0.12);position:sticky;top:12px;z-index:50}
+.header h1{margin:0;font-size:1.45rem}
+.header p{margin:.3rem 0 0;font-size:.95rem;opacity:.95}
+
+/* top controls */
+.top-controls{display:flex;gap:.6rem;align-items:center;margin-top:.75rem;flex-wrap:wrap}
+.btn{background:var(--accent);color:white;padding:.5rem .8rem;border-radius:10px;border:none;cursor:pointer;font-weight:600;box-shadow:0 6px 16px rgba(30,136,229,0.12)}
+.btn.secondary{background:transparent;color:var(--accent);border:1px solid rgba(30,136,229,0.12)}
+.search{flex:1;display:flex;align-items:center;gap:.4rem}
+.input{padding:.45rem .6rem;border-radius:8px;border:1px solid #e6eefc;flex:1}
+
+/* layout */
+.layout{display:grid;grid-template-columns:300px 1fr;gap:1rem;margin-top:1rem}
+@media(max-width:920px){.layout{grid-template-columns:1fr}}
+.sidebar{position:sticky;top:100px;align-self:start}
+.card{background:var(--card);padding:1rem;border-radius:12px;box-shadow:0 8px 24px rgba(2,6,23,0.04);margin-bottom:1rem}
+.toc h3{margin:.2rem 0 .6rem 0}
+.chapter-list{display:flex;flex-direction:column;gap:.45rem;max-height:60vh;overflow:auto;padding-right:.3rem}
+.toc a{display:block;padding:.55rem .6rem;border-radius:8px;text-decoration:none;color:#0b3a66;font-weight:700;background:linear-gradient(180deg,#f8fbff,#fff);border:1px solid rgba(14,60,110,0.04)}
+.toc a:hover, .toc a.active{background:linear-gradient(90deg,#e3f2fd,#fff3f8);box-shadow:0 8px 20px rgba(30,136,229,0.06)}
+.small{font-size:.9rem;color:var(--muted)}
+
+/* content */
+.content{padding-bottom:8rem}
+.chapter{display:none}
+.chapter.show{display:block;animation:fade 320ms ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.chapter-hero{display:flex;flex-direction:column;gap:.35rem;margin-bottom:1rem;padding:1rem;border-radius:12px;background:linear-gradient(90deg,#e3f2fd,#fff7f3)}
+.chapter h2{margin:0}
+.meta{color:var(--muted);font-weight:600}
+
+/* columns */
+.columns{display:grid;grid-template-columns:1fr 320px;gap:1rem}
+@media(max-width:920px){.columns{grid-template-columns:1fr}}
+.section{margin-bottom:1rem}
+.section h4{margin:.1rem 0 .5rem 0}
+.formula{background:#f8fafc;padding:.6rem;border-radius:8px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,"Roboto Mono",monospace}
+.example{background:linear-gradient(180deg,#fff,#f1f9ff);padding:.8rem;border-radius:8px;border-left:4px solid #42a5f5;margin-bottom:.5rem}
+.solution{display:none;background:#fff7dd;padding:.6rem;border-radius:8px;border-left:4px solid #f59e0b;margin-top:.6rem}
+.btn-inline{display:inline-block;padding:.35rem .6rem;border-radius:8px;background:var(--accent);color:#fff;border:none;cursor:pointer;margin-top:.4rem}
+.btn-ghost{background:transparent;border:1px solid rgba(0,0,0,0.06);padding:.4rem .6rem;border-radius:8px}
+
+/* practice & quiz */
+.practice-list{margin-left:1.1rem}
+.quiz-section{margin-top:2rem}
+.quiz-card{background:linear-gradient(180deg,#fff,#f8fbff);padding:.8rem;border-radius:10px;border-left:4px solid #42a5f5;margin-bottom:.8rem}
+.quiz-options{display:flex;flex-direction:column;gap:.45rem;margin-top:.5rem}
+.option{display:flex;gap:.6rem;align-items:center}
+.option input{accent-color:var(--accent)}
+.quiz-result{margin-top:.6rem;padding:.6rem;border-radius:8px;background:#eefcf7}
+
+/* reference modal */
+#referenceModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:90;align-items:center;justify-content:center}
+.ref-box{max-width:980px;width:96%;background:white;padding:1rem;border-radius:12px;max-height:86vh;overflow:auto}
+
+/* footer */
+.footer{margin-top:1.5rem;text-align:center;color:var(--muted);padding:1rem}
+.top-right{display:flex;gap:.6rem;align-items:center}
+
+/* print */
+@media print{
+  body{background:white}
+  .sidebar,.top-controls,.btn,.icon-btn{display:none}
+  .chapter{display:block}
+  .chapter-hero{background:none;box-shadow:none}
+  .card{box-shadow:none}
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header class="header">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap">
+      <div>
+        <h1>Class 9 Mathematics</h1>
+        <p class="small">Student-level explanations, formulas, examples & quizzes — Nepal Curriculum (Single File)</p>
+      </div>
+      <div class="top-right">
+        <button class="btn" onclick="openReference()">Formula Reference</button>
+        <button class="btn secondary" onclick="window.print()">Print</button>
+      </div>
+    </div>
+
+    <div class="top-controls" style="margin-top:.8rem">
+      <div class="search" style="flex:1">
+        <input id="siteSearch" class="input" placeholder="Search topics, examples, formulas..." oninput="searchSite(this.value)" />
+        <button class="btn secondary" onclick="clearSearch()">Clear</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="card toc">
+        <h3>Chapters</h3>
+        <div class="chapter-list" id="tocList">
+          <!-- TOC buttons generated by JS -->
+        </div>
+        <div style="margin-top:.6rem" class="small">Tip: Click a chapter to open. Use search to find keywords like "area", "tax", or "sets".</div>
+      </div>
+
+      <div class="card">
+        <h4>Quick Links</h4>
+        <div style="display:flex;flex-direction:column;gap:.5rem;margin-top:.6rem">
+          <button class="btn-ghost" onclick="goHome()">Home</button>
+          <button class="btn-ghost" onclick="document.getElementById('quizSection').scrollIntoView({behavior:'smooth'})">Go to Quiz Section</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- CONTENT -->
+    <main class="content">
+      <!-- HOME -->
+      <section id="home" class="card chapter show">
+        <div class="chapter-hero">
+          <h2>Welcome — Class 9 Mathematics (Student Level)</h2>
+          <div class="meta">This mini-textbook is written in simple language for Class 9 students following the Nepal curriculum. Use the sidebar to open any chapter. The Quiz Section at the bottom contains chapter-wise quizzes.</div>
+        </div>
+
+        <p class="section">Each chapter contains:</p>
+        <ul class="section small">
+          <li><strong>Overview</strong> — short explanation in student-friendly language</li>
+          <li><strong>Key formulas</strong> — quick reference for solving problems</li>
+          <li><strong>Worked examples</strong> — step-by-step solutions (click "Show Solution")</li>
+          <li><strong>Practice problems</strong> — try them after reading</li>
+        </ul>
+
+        <div style="margin-top:.6rem" class="nav-controls">
+          <button class="btn" onclick="openChapter(1)">Start Chapter 1: Sets</button>
+          <button class="btn secondary" onclick="openChapter(5)">Jump to Mensuration</button>
+        </div>
+      </section>
+
+      <!-- Chapters container -->
+      <div id="chaptersContainer"></div>
+
+      <!-- QUIZ SECTION (separate at bottom, organized by chapter) -->
+      <section id="quizSection" class="card quiz-section">
+        <h3>Quiz Section — Choose a chapter to take its quiz</h3>
+        <p class="small">Pick a chapter, answer the multiple-choice questions, and press Submit for instant feedback.</p>
+
+        <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.6rem">
+          <label class="small">Select chapter</label>
+          <select id="quizChapterSelect" style="padding:.45rem .6rem;border-radius:8px;border:1px solid #e6eefc;" onchange="renderQuizForChapter(this.value)">
+            <option value="">-- Select chapter --</option>
+          </select>
+          <button class="btn secondary" onclick="document.getElementById('quizSection').scrollIntoView({behavior:'smooth'})">Go</button>
+        </div>
+
+        <div id="quizContainer" style="margin-top:.8rem"></div>
+      </section>
+
+      <div class="footer">
+        <div>© 2025 — Class 9 Mathematics | Nepal Curriculum</div>
+        <div class="small">Built for students — copy, edit, or host. Ask if you want GitHub Pages steps.</div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Reference Modal -->
+<div id="referenceModal">
+  <div class="ref-box">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h3 style="margin:0">Formula Reference</h3>
+      <button class="btn secondary" onclick="closeReference()">Close</button>
+    </div>
+    <hr style="margin:.6rem 0"/>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:.6rem">
+      <div class="card"><h4>Sets</h4><div class="formula">n(A ∪ B) = n(A) + n(B) − n(A ∩ B)</div></div>
+      <div class="card"><h4>Percent & Tax</h4><div class="formula">Tax = P × r/100</div><div class="formula">Final = P × (1 + r/100)</div></div>
+      <div class="card"><h4>Area</h4><div class="formula">Rectangle = l × w</div><div class="formula">Triangle = 1/2 × b × h</div></div>
+      <div class="card"><h4>Volume</h4><div class="formula">Cylinder = π r² h</div><div class="formula">Sphere = 4/3 π r³</div></div>
+      <div class="card"><h4>Algebra</h4><div class="formula">a² − b² = (a − b)(a + b)</div><div class="formula">(a + b)² = a² + 2ab + b²</div></div>
+      <div class="card"><h4>Sequences</h4><div class="formula">aₙ = a + (n − 1)d</div><div class="formula">Sₙ = n/2 × (2a + (n −1)d)</div></div>
+    </div>
+    <p class="small" style="margin-top:.6rem">Tip: Use these formulas while solving practice problems.</p>
+  </div>
+</div>
+
+<!-- =========================
+     SCRIPTS
+     ========================= -->
+<script>
+/* DATA: student-level content for 10 chapters (simple language) */
+const book = [
+  null, // index 0 unused
+  { // 1 Sets
+    id:1, title:'Sets',
+    overview: 'A set is a collection of different objects. We write sets inside { } like A = {1,2,3}. Sets help us group items and work with them.',
+    formulas: ['x ∈ A means x is in set A', 'A ∪ B means all elements in A or B', 'A ∩ B means elements common to A and B'],
+    examples:[
+      {q:'Let A = {1,2,3,4} and B = {3,4,5}. Find A ∪ B and A ∩ B.',
+       sol:'A ∪ B = {1,2,3,4,5}. A ∩ B = {3,4}.'},
+      {q:'If U = {1,2,3,4,5,6} and A = {1,3,5}, what is A\' (elements not in A)?',
+       sol:"A' = U \\ A = {2,4,6}."}
+    ],
+    practice:['List A ∪ B and A ∩ B for A={a,b,c}, B={b,c,d}.','If U={1..10} and A even numbers, find A\'','Is {1,2} ⊂ {1,2,3}? Explain.'],
+    quiz:[
+      {q:'If A={1,2} and B={2,3}, is 2 ∈ A∩B?', options:['Yes','No'], answer:0},
+      {q:'A∪B contains elements that are in:', options:['Only A','A or B or both','Only B'], answer:1},
+      {q:'Empty set is written as:', options:['∅','{0}','{}?'], answer:0}
+    ]
+  },
+
+  { //2 Taxation
+    id:2, title:'Taxation',
+    overview:'Tax is money added to price by the government. Find tax amount as percentage of price or find the original price when final price is known.',
+    formulas:['Tax = Price × rate/100','Final price = Price + Tax = Price × (1 + rate/100)','Original Price = Final / (1 + rate/100)'],
+    examples:[
+      {q:'Price = Rs.1200, tax 13%. Find tax and final price.', sol:'Tax = 1200×0.13 = Rs.156. Final = Rs.1356.'},
+      {q:'Final price Rs.330 after 10% tax. Find original price.', sol:'Original = 330 / 1.1 = Rs.300.'}
+    ],
+    practice:['Final price of Rs.500 at 15% tax?','Original price if final is Rs.224 after 12% tax?','Tax saved if rate drops from 20% to 15% on Rs.1000?'],
+    quiz:[
+      {q:'Tax 10% on Rs.200 => amount?', options:['Rs.20','Rs.200','Rs.2'], answer:0},
+      {q:'To remove tax divide by', options:['1 + r/100','1 - r/100','r/100'], answer:0},
+      {q:'If r=0 final price =', options:['P','0','2P'], answer:0}
+    ]
+  },
+
+  { //3 Commission
+    id:3, title:'Commission & Dividend',
+    overview:'Commission is a small percent paid to a seller or agent. Dividend/problem of sharing divides money in given ratios.',
+    formulas:['Commission = Selling price × percent/100','Share = Total × part / sum of parts'],
+    examples:[
+      {q:'Agent sells Rs.2000 at 5% commission. Commission?', sol:'2000×0.05 = Rs.100.'},
+      {q:'Profit Rs.600 split 2:3:5. A\'s share?', sol:'Sum=10 → A=600×2/10=Rs.120.'}
+    ],
+    practice:['Commission on Rs.1500 at 8%?','Split 750 in 3:2:1','Agent commission on Rs.4000 at 6%?'],
+    quiz:[
+      {q:'10% of 1000 =', options:['100','10','1000'], answer:0},
+      {q:'Share method uses', options:['Ratios','Percent only','Multiplication only'], answer:0},
+      {q:'Commission is usually on', options:['Selling price','Cost price','Both depending on question'], answer:2}
+    ]
+  },
+
+  { //4 Household Arithmetic
+    id:4, title:'Household Arithmetic',
+    overview:'Everyday math like discounts, splitting bills and quick percent calculations.',
+    formulas:['Discount = Marked price × discount%/100','Sale price = Marked price − discount'],
+    examples:[
+      {q:'Shirt Rs.800 at 25% discount. Sale price?', sol:'Discount = 200 → Sale = Rs.600.'},
+      {q:'Split Rs.360 in ratio 2:3:4.', sol:'Sum=9, shares=80,120,160.'}
+    ],
+    practice:['Radio 10% off Rs.2000. Sale price?','Divide Rs.525 in 5:4','Find 15% of Rs.450'],
+    quiz:[
+      {q:'25% of 800 =', options:['200','250','180'], answer:0},
+      {q:'Sale price = Marked price − ?', options:['discount','tax','profit'], answer:0},
+      {q:'Ratio split 1:2 of 300 => first', options:['100','150','200'], answer:0}
+    ]
+  },
+
+  { //5 Mensuration
+    id:5, title:'Mensuration',
+    overview:'Area and volume formulas for shapes and solids — used to measure land, boxes, or objects.',
+    formulas:['Rectangle area = l × w','Triangle area = 1/2 × b × h','Circle area = π r²','Cylinder volume = π r² h'],
+    examples:[
+      {q:'Area of circle r=7 cm (use 22/7).', sol:'Area = (22/7)×7×7 = 154 cm².'},
+      {q:'Cylinder r=3cm h=10cm (π≈3.14).', sol:'V = 3.14×9×10 = 282.6 cm³.'}
+    ],
+    practice:['Triangle area base10 height6','Surface area of cube side4','Volume sphere r5 (π=3.14)'],
+    quiz:[
+      {q:'Rectangle 5×8 area =', options:['40','13','20'], answer:0},
+      {q:'Circumference formula', options:['πr²','2πr','πd²'], answer:1},
+      {q:'Sphere volume', options:['πr²','(4/3)πr³','πr³'], answer:1}
+    ]
+  },
+
+  { //6 Geometry
+    id:6, title:'Geometry & Circle',
+    overview:'Angles, triangles, and circle facts. Remember Pythagoras for right triangles.',
+    formulas:['Triangle angles sum = 180°','Pythagoras: a² + b² = c²','Circle: C = 2πr, area = πr²'],
+    examples:[
+      {q:'Right triangle legs 3 and 4. Hypotenuse?', sol:'c = √(9+16)=5.'},
+      {q:'Circumference r=5 (π≈3.14).', sol:'C = 2×3.14×5 = 31.4 cm.'}
+    ],
+    practice:['Find missing angle if A=50,B=60','Area circle diameter14 (π=22/7)','Right triangle hyp13 leg5 find other'],
+    quiz:[
+      {q:'Sum triangle angles =', options:['360°','180°','90°'], answer:1},
+      {q:'Pythagoras applies to', options:['All triangles','Right triangles','Isosceles only'], answer:1},
+      {q:'Diameter = 2 ×', options:['radius','area','circumference'], answer:0}
+    ]
+  },
+
+  { //7 Factorization
+    id:7, title:'Factorization & Algebra',
+    overview:'Learn to write expressions as products (factor) and expand them. Useful for solving equations.',
+    formulas:['a² − b² = (a − b)(a + b)','(a + b)² = a² + 2ab + b²'],
+    examples:[
+      {q:'Factorize x² − 9.', sol:'(x−3)(x+3).'},
+      {q:'Simplify 2x(x+3)+4x.', sol:'=2x²+6x+4x=2x²+10x=2x(x+5).'}
+    ],
+    practice:['Factorize 4y² −25','Expand (x+2)²','Factorize x³ + 8'],
+    quiz:[
+      {q:'x² −16 =', options:['(x−4)(x+4)','(x−8)(x+2)','(x+4)²'], answer:0},
+      {q:'(a+b)² =', options:['a²+2ab+b²','a²−2ab+b²','a³+b³'], answer:0},
+      {q:'Common factor method when', options:['no common term','common term exists','always'], answer:1}
+    ]
+  },
+
+  { //8 Linear eq
+    id:8, title:'Linear Equations',
+    overview:'Solve equations like ax + b = 0 by moving numbers and dividing by the coefficient of x.',
+    formulas:['ax + b = 0 ⇒ x = −b/a'],
+    examples:[
+      {q:'Solve 3x + 5 = 20.', sol:'3x=15 ⇒ x=5.'},
+      {q:'Solve 2(x−3)=4x+2.', sol:'2x−6=4x+2 ⇒ −8=2x ⇒ x=−4.'}
+    ],
+    practice:['Solve x/2 +3 =7','5x −9 =16','3(x+2)=2(x+5)'],
+    quiz:[
+      {q:'2x=8 ⇒ x=', options:['4','6','2'], answer:0},
+      {q:'Isolate x by', options:['add/subtract','multiply by x','ignore'], answer:0},
+      {q:'ax+b=0 ⇒ x=', options:['−b/a','b/a','no solution'], answer:0}
+    ]
+  },
+
+  { //9 Sequence
+    id:9, title:'Sequence & Series',
+    overview:'Arithmetic Progression (AP) has a fixed difference. Learn nth term and sum formulas.',
+    formulas:['aₙ = a + (n−1)d','Sₙ = n/2 × (2a + (n−1)d)'],
+    examples:[
+      {q:'AP 3,7,11,... find 10th term', sol:'a=3,d=4 ⇒ a₁₀=3+9×4=39.'},
+      {q:'Sum first 5 of 2,5,8,...', sol:'S₅=5/2(4+12)=40.'}
+    ],
+    practice:['7th term of 4,9,14','Sum first 8 if a=1,d=2','Given a₅=20,d=3 find a₁'],
+    quiz:[
+      {q:'Common difference of 2,5,8 =', options:['3','4','2'], answer:0},
+      {q:'Formula aₙ = ... is for', options:['AP','GP','Both'], answer:0},
+      {q:'Sₙ uses factor', options:['n/2','2n','n²'], answer:0}
+    ]
+  },
+
+  { //10 Indices
+    id:10, title:'Indices & Surds',
+    overview:'Rules of exponents and simplifying square roots (surds). Use prime factors to simplify surds.',
+    formulas:['a^m × a^n = a^{m+n}','(a^m)^n = a^{mn}','a^0 = 1 (a ≠ 0)'],
+    examples:[
+      {q:'Simplify 2³ × 2².', sol:'2^{5} = 32.'},
+      {q:'Simplify √72.', sol:'72=36×2 ⇒ √72=6√2.'}
+    ],
+    practice:['Compute 3^4 ×3^2','Simplify √50','Evaluate (2^3)^2'],
+    quiz:[
+      {q:'a^0 =', options:['1','0','a'], answer:0},
+      {q:'√(ab) =', options:['√a × √b','a + b','a − b'], answer:0},
+      {q:'2³ × 2² =', options:['2^5','2^6','2^1'], answer:0}
+    ]
+  }
+];
+
+/* Render TOC & Chapters */
+const toc = document.getElementById('tocList');
+const chaptersContainer = document.getElementById('chaptersContainer');
+const quizSelect = document.getElementById('quizChapterSelect');
+const quizContainer = document.getElementById('quizContainer');
+
+function renderTOCandChapters(){
+  for(let i=1;i<book.length;i++){
+    const ch = book[i];
+
+    // TOC link
+    const link = document.createElement('a');
+    link.href = '#';
+    link.textContent = `${i}. ${ch.title}`;
+    link.id = `toc-${i}`;
+    link.onclick = (e)=>{ e.preventDefault(); openChapter(i); setActiveTOC(i); };
+    toc.appendChild(link);
+
+    // chapter section
+    const sec = document.createElement('section');
+    sec.className = 'card chapter';
+    sec.id = `chapter-${i}`;
+
+    // build content HTML
+    sec.innerHTML = `
+      <div class="chapter-hero">
+        <h2>Chapter ${i}: ${ch.title}</h2>
+        <div class="meta">${ch.overview}</div>
+      </div>
+
+      <div class="columns">
+        <div class="main-col">
+          <div class="section">
+            <h4>Key formulas & notes</h4>
+            ${ch.formulas.map(f=>`<div class="formula">${escapeHtml(f)}</div>`).join('')}
+          </div>
+
+          <div class="section">
+            <h4>Worked examples</h4>
+            ${ch.examples.map((ex,idx)=>`
+              <div class="example">
+                <div><strong>Example ${idx+1}:</strong> ${escapeHtml(ex.q)}</div>
+                <button class="btn-inline" onclick="toggleSolution('sol-${i}-${idx}')">Show Solution</button>
+                <div id="sol-${i}-${idx}" class="solution">${escapeHtml(ex.sol)}</div>
+              </div>
+            `).join('')}
+          </div>
+
+          <div class="section">
+            <h4>Practice problems</h4>
+            <ol class="practice-list">
+              ${ch.practice.map(p=>`<li>${escapeHtml(p)}</li>`).join('')}
+            </ol>
+          </div>
+        </div>
+
+        <aside class="chap-aside">
+          <div class="card">
+            <h4>Tips for students</h4>
+            <p class="small">Read the formula, try the example on paper, then attempt the practice. Don't rush—write steps clearly.</p>
+          </div>
+
+          <div class="card">
+            <h4>Navigation</h4>
+            <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+              <button class="btn-ghost" onclick="prevChapter(${i})">Previous</button>
+              <button class="btn-ghost" onclick="nextChapter(${i})">Next</button>
+              <button class="btn-ghost" onclick="goHome()">Home</button>
+            </div>
+          </div>
+        </aside>
+      </div>
+    `;
+    chaptersContainer.appendChild(sec);
+
+    // add to quiz select
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = `${i}. ${ch.title}`;
+    quizSelect.appendChild(opt);
+  }
+}
+renderTOCandChapters();
+
+/* NAV and UI helpers */
+function openChapter(i){
+  document.querySelectorAll('.chapter').forEach(n=>n.classList.remove('show'));
+  document.getElementById('home').classList.remove('show');
+  const el = document.getElementById(`chapter-${i}`);
+  if(el) el.classList.add('show');
+  setActiveTOC(i);
+  window.scrollTo({top:100,behavior:'smooth'});
+}
+function goHome(){
+  document.querySelectorAll('.chapter').forEach(n=>n.classList.remove('show'));
+  document.getElementById('home').classList.add('show');
+  clearActiveTOC();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function nextChapter(i){ const next = i+1 <= 10 ? i+1 : 1; openChapter(next); }
+function prevChapter(i){ const prev = i-1 >=1 ? i-1 : 10; openChapter(prev); }
+function setActiveTOC(i){ clearActiveTOC(); const a = document.getElementById(`toc-${i}`); if(a) a.classList.add('active'); }
+function clearActiveTOC(){ document.querySelectorAll('#tocList a').forEach(a=>a.classList.remove('active')); }
+
+/* solution toggle */
+function toggleSolution(id){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.style.display = el.style.display === 'block' ? 'none' : 'block';
+  if(el.style.display === 'block') el.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+/* quiz rendering (chapter organized) */
+function renderQuizForChapter(val){
+  const chId = Number(val);
+  quizContainer.innerHTML = '';
+  if(!chId || !book[chId]) return;
+  const ch = book[chId];
+
+  const title = document.createElement('div');
+  title.innerHTML = `<h4 style="margin:0 0 .6rem 0">${chId}. ${ch.title} — Quiz</h4>`;
+  quizContainer.appendChild(title);
+
+  const quizWrap = document.createElement('div');
+  quizWrap.id = `quiz-wrap-${chId}`;
+
+  ch.quiz.forEach((q,qi)=>{
+    const card = document.createElement('div');
+    card.className = 'quiz-card';
+    card.innerHTML = `<div><strong>Q${qi+1}.</strong> ${escapeHtml(q.q)}</div>
+      <div class="quiz-options" id="quiz-${chId}-${qi}">
+        ${q.options.map((opt,oi)=>`
+          <label class="option"><input type="radio" name="q-${chId}-${qi}" value="${oi}"/> ${escapeHtml(opt)}</label>
+        `).join('')}
+      </div>`;
+    quizWrap.appendChild(card);
+  });
+
+  // submit button & result
+  const submit = document.createElement('button');
+  submit.className = 'btn';
+  submit.textContent = 'Submit Quiz';
+  submit.onclick = ()=> gradeChapterQuiz(chId);
+  quizWrap.appendChild(submit);
+
+  const resultDiv = document.createElement('div');
+  resultDiv.id = `quiz-result-${chId}`;
+  quizWrap.appendChild(resultDiv);
+
+  quizContainer.appendChild(quizWrap);
+  // scroll
+  quizWrap.scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+function gradeChapterQuiz(chId){
+  const ch = book[chId];
+  let correct = 0, total = ch.quiz.length;
+  ch.quiz.forEach((q,qi)=>{
+    const radios = document.getElementsByName(`q-${chId}-${qi}`);
+    const selected = Array.from(radios).find(r=>r.checked);
+    if(selected && Number(selected.value) === q.answer) correct++;
+  });
+  const res = document.getElementById(`quiz-result-${chId}`);
+  res.innerHTML = `<div class="quiz-result"><strong>Score:</strong> ${correct} / ${total} — ${(correct/total*100).toFixed(0)}% 
+    ${correct===total? '🎉 Excellent!' : (correct/total>=0.6? 'Good — revise missed questions.' : 'Keep practicing and review the chapter.')}</div>`;
+  res.scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+/* search */
+function searchSite(q){
+  q = (q || '').trim().toLowerCase();
+  if(!q){ goHome(); return; }
+  let matches = [];
+  for(let i=1;i<book.length;i++){
+    const ch = book[i];
+    const hay = (ch.title + ' ' + ch.overview + ' ' + ch.formulas.join(' ') + ' ' + ch.examples.map(e=>e.q+' '+e.sol).join(' ') + ' ' + ch.practice.join(' ')).toLowerCase();
+    if(hay.includes(q)) matches.push(i);
+  }
+  if(matches.length===0){ alert(`No results for "${q}". Try simpler words like "area", "tax", "sets".`); return; }
+  openChapter(matches[0]);
+  // highlight toc matches briefly
+  matches.forEach(i=>{ const link=document.getElementById(`toc-${i}`); if(link){ link.style.background='linear-gradient(90deg,#fff3e0,#fff)'; setTimeout(()=>link.style.background='',1400); }});
+}
+
+/* reference modal */
+function openReference(){ document.getElementById('referenceModal').style.display='flex'; }
+function closeReference(){ document.getElementById('referenceModal').style.display='none'; }
+
+/* utility: escape HTML (basic) */
+function escapeHtml(text){
+  if(!text) return '';
+  return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* clear search */
+function clearSearch(){ document.getElementById('siteSearch').value=''; goHome(); }
+
+/* initialize - ensure home visible */
+goHome();
+</script>
+
+</body>
+</html>
